@@ -39,3 +39,8 @@ The system is orchestrated via a single, end-to-end n8n workflow.
     *   In the `Get row(s) in sheet` node, update the Sheet ID to point to your data source.
     *   In both `Send a message` nodes (for success and error), update the Slack channel to your desired destination.
 4.  **Activate Workflow**: Turn the workflow on.
+
+   ---
+## Author
+
+- [Muneeb Ali Khan] (https://www.linkedin.com/in/muneeb-ali-khan-2a1675365)
