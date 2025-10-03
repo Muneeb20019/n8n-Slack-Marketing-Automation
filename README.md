@@ -28,10 +28,7 @@ An automated reporting pipeline built in **n8n** that processes weekly marketing
 
 The system is orchestrated via a single, end-to-end n8n workflow.
 
-![Workflow Diagram](PASTE_IMAGE_LINK_HERE)
-
-
-
+![Workflow Diagram](https://github.com/Muneeb20019/n8n-Slack-Marketing-Automation/blob/main/n8n-slack%20workflow.png?raw=true)
 ---
 
 ## Setup
