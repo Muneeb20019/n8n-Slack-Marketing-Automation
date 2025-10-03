@@ -30,7 +30,7 @@ The system is orchestrated via a single, end-to-end n8n workflow.
 
 ![Workflow Diagram](PASTE_IMAGE_LINK_HERE)
 
-*   **(You must upload a screenshot of your workflow to the repository and replace `PASTE_IMAGE_LINK_HERE` with the link to that image.)**
+
 
 ---
 
