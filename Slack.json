@@ -1,0 +1,683 @@
+{
+  "name": "Slack",
+  "nodes": [
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a marketing analyst and an expert data formatter. Your task is to create a complete report in a single Markdown block based on the provided JSON data.\n\nYour response MUST follow these rules exactly:\n1. The entire output must be in valid Markdown format.\n2. Do not include any text, explanations, or conversation outside of the specified format.\n\nHere is the required format:\n\n# Weekly Campaign Performance Report\n\n| Campaign Name | Clicks | Impressions | Conversions | Cost ($) | CTR (%) | CPA ($) | Performance Status |\n|---|---|---|---|---|---|---|---|\n(Here, you must create a Markdown table row for EACH of the campaign objects from the JSON data. You must re-calculate and format 'CTR' and 'CPA'. For the 'Performance Status', you MUST use the exact emojis and words specified in the rules below.)\n\n---\n\n## AI-Generated Summary\n(Here, you must write a concise, natural-language paragraph summarizing the overall performance. The summary MUST be in the same style and level of detail as this example: \"This week's campaigns generated 5,450 total clicks and 258 conversions across 6 active campaigns. Search - Branded Keywords delivered the highest CTR at 3.75%, while Summer Sale - Google Ads achieved the most conversions (60). Two campaigns need attention: Brand Awareness - TikTok has elevated acquisition costs at $66.67 per conversion, and Search - Non-Branded Keywords is significantly underperforming with an $88 CPA.\")\n\n## Key Recommendations\n(Here, you must write a bulleted list of 2-3 specific, actionable recommendations. Each recommendation MUST start with one of the specified emojis. The first word of each recommendation MUST be bolded using Markdown's double-asterisk syntax, like this: **Scale up**, **Optimize**, or **Review**.)\n\n**Performance Status Rules:**\n- If the campaign is the top performer by conversions, use: `✅ Top Performer`\n- If CTR is exceptionally high (e.g., > 3.5%), use: `✅ Excellent CTR`\n- If performance is normal, use: `✅ Good`\n- If CPA is high (e.g., > $65), use: `⚠️ High CPA`\n- If performance is clearly poor (e.g., very high CPA and low conversions), use: `🚨 Underperforming`\n\n**Key Recommendation Emoji and Bolding Rules:**\n- For recommendations about scaling up a successful campaign, use: `🏆 **Scale up**:`\n- For recommendations about optimizing a campaign to improve it, use: `⚠️ **Optimize**:`\n- For recommendations about reviewing a failing campaign, use: `🚨 **Review**:`\n\nHere is the JSON data for your analysis:\n{{ JSON.stringify($('Code1').item.json.allCampaigns) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        6352,
+        4096
+      ],
+      "id": "adcc4d64-5dc3-41e5-a9e9-0edbe2e8d4fd",
+      "name": "Message a model",
+      "executeOnce": false,
+      "credentials": {
+        "openAiApi": {
+          "id": "GBjVLjK1Fo3cXN61",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        5744,
+        4112
+      ],
+      "id": "b1a0b439-b0cc-4c6b-9014-726a0f7e36cf",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { allCampaigns: $input.all().map(item => item.json) } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6192,
+        4096
+      ],
+      "id": "5a6267c0-2bb7-4d33-b255-eca0d1fc6051",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "mode": "markdownToHtml",
+        "markdown": "={{ $json.text }}",
+        "options": {
+          "requireSpaceBeforeHeadingText": true,
+          "noHeaderId": true,
+          "tables": true
+        }
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        6896,
+        3984
+      ],
+      "id": "f3e0aa26-dadc-450c-906c-71de2e51c80e",
+      "name": "Markdown1"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "data",
+        "binaryPropertyName": "file",
+        "options": {
+          "fileName": "=[Week of {{ $now.toFormat('yyyy-MM-dd') }}] - Weekly Report.html"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        7056,
+        3984
+      ],
+      "id": "5294c53c-ce7b-4479-88fb-96a1d9459dd6",
+      "name": "Convert to File1"
+    },
+    {
+      "parameters": {
+        "operation": "createFromText",
+        "content": "file content",
+        "name": "=[Week of {{ $now.toFormat('yyyy-MM-dd') }}] - Weekly Report",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "11GZXeBc4CM7zoQHA-FjtNlsFRrKhA89K",
+          "mode": "id"
+        },
+        "options": {
+          "convertToGoogleDocument": true
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        6912,
+        4176
+      ],
+      "id": "9c85e33d-5e94-4964-98d7-f32354724416",
+      "name": "Create file from text2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "FQhOZIoQJEEbW3l0",
+          "name": "Google Drive account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        7344,
+        4160
+      ],
+      "id": "8a9f0fa9-7f7e-4d0e-8222-937d6bfce41d",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "changeFileContent": true,
+        "inputDataFieldName": "file",
+        "options": {
+          "fields": [
+            "id",
+            "webViewLink"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        7488,
+        4160
+      ],
+      "id": "1a75bc10-b7ef-4693-b084-2fc7146893f2",
+      "name": "Update file2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "FQhOZIoQJEEbW3l0",
+          "name": "Google Drive account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.item;\n\nif (item.binary && item.binary.file) {\n  item.binary.file.mimeType = 'text/html';\n}\n\nreturn item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7216,
+        3984
+      ],
+      "id": "b051d188-28c1-48e6-82fa-f001745a50b8",
+      "name": "Set to text/html2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1fbc801c-02b1-49b3-b9f6-3640e3488e24",
+              "name": "=text",
+              "value": "={{ $json.message.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6656,
+        4096
+      ],
+      "id": "2c406d94-1126-4733-8e3c-53945df15a25",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09J981R35L",
+          "mode": "list",
+          "cachedResultName": "social"
+        },
+        "text": "=🚀 *Weekly Campaign Report is Ready!*\n\n*Summary:* {{ $json.summarySentence }}\n\n*Performance Signal (Total Conversions):* {{ $json.totalConversions }}\n\n*View the Full Report Here:*\n<{{ $json.docLink }}|Weekly Google Doc Report>",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        7952,
+        4160
+      ],
+      "id": "8062f8a5-b7c2-45b9-9a6c-45fae36dddad",
+      "name": "Send a message",
+      "webhookId": "6de234b3-b1aa-42cb-8eeb-bbd8b0ea4659",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "0u5ObokYM9Zn8SfS",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        7648,
+        4160
+      ],
+      "id": "e307312f-51fb-4df0-b2a4-1fe0b3544b18",
+      "name": "Get a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "6mnu3YkaiFwmyj8O",
+          "name": "Google Docs account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the full text content and document ID from the input\nconst fullText = $json.content;\nconst docId = $json.documentId;\n\n// --- Extract the Summary Sentence ---\nconst summaryBlock = fullText.split('AI-Generated Summary')[1].split('Key Recommendations')[0].trim();\nconst summarySentence = summaryBlock.split('. ')[0] + '.';\n\n// --- Extract the Performance Signal (CRITICAL FIX) ---\n// First, replace all newline characters with spaces to clean the text.\nconst singleLineText = summaryBlock.replace(/\\s+/g, ' ');\n\n// THIS IS THE CORRECTED LOGIC:\n// It now looks for a number followed by the word \"conversions\", without needing \"total\".\nconst conversionsMatch = singleLineText.match(/(\\d{1,3}(,\\d{3})*|\\d+)\\s+conversions/);\n\n// If a match is found, use that number. Otherwise, use 'N/A'.\nconst totalConversions = conversionsMatch ? parseInt(conversionsMatch[1].replace(/,/g, '')) : 'N/A';\n\n// --- Build the Document Link ---\nconst docLink = `https://docs.google.com/document/d/${docId}/edit`;\n\n// Return the final, clean object for the Slack node\nreturn [{\n  json: {\n    summarySentence: summarySentence,\n    totalConversions: totalConversions,\n    docLink: docLink\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7808,
+        4160
+      ],
+      "id": "94b11b46-6b64-4ea3-bbbc-1d838143f989",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ff5c3c87-07de-4b05-88e1-bfc948c04ec0",
+              "leftValue": "={{ $json.campaign_name }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        6032,
+        4112
+      ],
+      "id": "3910edb4-ebce-4c8b-a75e-da85dd5ac7e7",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09J981R35L",
+          "mode": "list",
+          "cachedResultName": "social"
+        },
+        "text": "=⚠️ Automation Alert! ⚠️\n\n📋 Reason: Data source is empty or invalid.\n🔍 Action: Please check the source Google Sheet.",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        6480,
+        4448
+      ],
+      "id": "02743e03-25d9-473f-8003-e8521ff723c1",
+      "name": "Send a message1",
+      "webhookId": "df3c3d6e-5369-4ea4-9901-cea259a17902",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "0u5ObokYM9Zn8SfS",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1FzDz3XKIgyQxg5pFLNPjO-XQjrRfpbZWqChZrdYdpLs",
+          "mode": "list",
+          "cachedResultName": "Mock Click Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FzDz3XKIgyQxg5pFLNPjO-XQjrRfpbZWqChZrdYdpLs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Mock Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FzDz3XKIgyQxg5pFLNPjO-XQjrRfpbZWqChZrdYdpLs/edit#gid=0"
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "specifyRangeA1",
+              "range": "A:E"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        5904,
+        4112
+      ],
+      "id": "9dea2a34-76a2-46da-8b35-3562aeccee94",
+      "name": "Get row(s) in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "riisbxOgVftPa2eH",
+          "name": "Google Sheets account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { allCampaigns: $input.all().map(item => item.json) } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6272,
+        4448
+      ],
+      "id": "968a04e1-4177-478e-8fcc-9b81deeaa7a3",
+      "name": "Code4"
+    },
+    {
+      "parameters": {
+        "content": "## Data Input and Preparation  \n**Fetches and validates data from Google Sheets,then calculate key matrics",
+        "height": 432,
+        "width": 624,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        5696,
+        3888
+      ],
+      "typeVersion": 1,
+      "id": "fd791fd2-a0c0-4934-9c0a-d8e5869d742e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## AI Content Generation\nGenerates the complete report content in markdown format for Google Document.",
+        "height": 432,
+        "width": 464,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        6320,
+        3888
+      ],
+      "typeVersion": 1,
+      "id": "63ed1a43-2699-4bf4-a3fe-ca0ca58841c3",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Document Creation and upload\nconverts the markdown to an HTML file and uploads to Google drive, creating the final Google document.",
+        "height": 432,
+        "width": 832,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        6784,
+        3888
+      ],
+      "typeVersion": 1,
+      "id": "00fd60c2-99d4-47b8-8fe0-c73ccdb8c1b0",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Final Notification\nParses the final documents and sends a summary to slack.",
+        "height": 432,
+        "width": 512,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        7616,
+        3888
+      ],
+      "typeVersion": 1,
+      "id": "cf26eb0b-a579-4137-9212-e3f0aa601974",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Error Alert\nNotifies slack if the data source is unavailable",
+        "height": 272,
+        "width": 528,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        6224,
+        4320
+      ],
+      "typeVersion": 1,
+      "id": "fa492abe-fd92-405b-84ab-aeb006faeb1b",
+      "name": "Sticky Note4"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown1": {
+      "main": [
+        [
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File1": {
+      "main": [
+        [
+          {
+            "node": "Set to text/html2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create file from text2": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Update file2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set to text/html2": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "Markdown1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create file from text2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update file2": {
+      "main": [
+        [
+          {
+            "node": "Get a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a document": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code4": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet3": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f24efcac-1cc7-403e-aa18-b7e57a60bc9d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "127a87802876c4f410ad961a36d7b352222b980de202cde22460a869bf7c731f"
+  },
+  "id": "HeiDo7LA9CXDMopc",
+  "tags": [
+    {
+      "createdAt": "2025-09-13T14:43:31.808Z",
+      "updatedAt": "2025-09-13T14:43:31.808Z",
+      "id": "HHqFlXTO5BriWHo6",
+      "name": "Free Giveaways"
+    }
+  ]
+}
