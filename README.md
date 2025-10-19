@@ -49,4 +49,4 @@ The system is orchestrated via a single, end-to-end n8n workflow.
    ---
 ## Author
 
-- [Muneeb Ali Khan](https://www.linkedin.com/in/muneeb-ali-khan-2a1675365)
+- [Muneeb Ali Khan] (https://www.linkedin.com/in/muneeb-ali-khan-2a1675365)
