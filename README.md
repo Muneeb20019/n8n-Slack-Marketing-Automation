@@ -6,11 +6,17 @@ An automated reporting pipeline built in **n8n** that processes weekly marketing
 
 ## Key Features
 
-*   **Automated Data Processing**: Fetches and validates campaign data from Google Sheets every week.
-*   **AI-Powered Analysis**: Uses the OpenAI API to generate a natural-language summary, and actionable recommendations.
-*   **Automated Report Generation**: Converts the AI's Markdown output to HTML and uploads it to Google Drive, creating a perfectly formatted Google Doc.
-*   **Slack-Centric Notifications**: Delivers a clean success summary with a link to the final report directly to a designated Slack channel.
-*   **Robust Error Handling**: If the initial data source is invalid or empty, a separate path is triggered that sends a specific, diagnostic alert to a Slack channel for immediate attention.
+*   **Automated Data Pipeline:** Triggers weekly to fetch and validate raw campaign data from **Google Sheets**, with a data quality gate to ensure reliability.
+
+*   **AI-Powered Content Generation:** An **OpenAI** agent generates the **entire report content**—including a full data table, summary, and recommendations—in a single, structured Markdown block.
+
+*   **High-Fidelity Document Creation:** The Markdown is converted to HTML and then uploaded to **Google Drive**, which automatically converts it into a perfectly formatted Google Doc with all styles and tables intact.
+
+*   **Dual-Channel Slack Notifications:**
+    *   **Success:** A clean summary and a link to the report are sent to a public channel.
+    *   **Failure:** A separate error-handling path sends a diagnostic alert to an internal channel if the initial data source is invalid, ensuring robust monitoring.
+
+*   **Robust Architecture:** The workflow uses custom **JavaScript** for data transformation and is designed with clear, commented sections and robust error handling, making it both powerful and maintainable.
 
 ---
 
@@ -43,4 +49,4 @@ The system is orchestrated via a single, end-to-end n8n workflow.
    ---
 ## Author
 
-- [Muneeb Ali Khan] (https://www.linkedin.com/in/muneeb-ali-khan-2a1675365)
+- [Muneeb Ali Khan](https://www.linkedin.com/in/muneeb-ali-khan-2a1675365)
